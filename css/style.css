@@ -1,0 +1,174 @@
+/* ---------- Base (mobile-first) ---------- */
+html {
+  scroll-behavior: smooth; /* annulé si prefers-reduced-motion */
+}
+
+:root{
+  --bg: #dedede;
+  --paper: #ffffff;
+  --text: #111;
+  --accent-border: blue;
+  --figure-radius-mobile: 35px;
+  --figure-radius-tablet: 50%;
+  --figure-radius-desktop: 0;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  padding: 5px;
+  margin: 15px;
+  font-size: 25px;
+  font-family: Arial, sans-serif;
+  line-height: 1.3;
+}
+
+h1, h2 {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  margin: 0 0 .6em 0;
+}
+h1 { font-size: 1.95em; }
+h2 { font-size: 1.2em; }
+
+li { margin-top: 20px; }
+
+/* GRID - mobile: 1 colonne, gap 10px */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr; /* 1 colonne sur mobile */
+  gap: 10px; /* 10px entre lignes et colonnes */
+  align-items: start;
+}
+
+/* Figure styling (mobile) */
+.grid figure {
+  margin: 0;
+  padding: 8px;
+  background: var(--paper);
+  border: 5px solid var(--accent-border); /* couleur de bordure modifiable via variable */
+  border-radius: var(--figure-radius-mobile); /* mobile : arrondi */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* forcer une forme régulière utile pour cercles sur tablettes */
+  aspect-ratio: 1 / 1; /* garde les figures carrées sur mobile pour un rendu contrôlé */
+}
+
+/* Image full width inside figure */
+.grid img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover; /* évite déformations et permet recadrage propre */
+  border-radius: 0;   /* on gère le rayon sur figure */
+}
+
+/* Caption */
+figcaption {
+  margin-top: 8px;
+  text-align: center;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+/* Accessible focus for keyboard users (figure clickable/linkable) */
+.grid figure:focus-within,
+.grid figure:focus {
+  outline: 3px solid Highlight;
+  outline-offset: 4px;
+}
+
+/* Footer link */
+footer a {
+  display: inline-block;
+  margin-top: 12px;
+}
+
+/* ---------- Préférence réduire animations/défilement ---------- */
+@media (prefers-reduced-motion: reduce) {
+  /* supprimer le comportement de défilement */
+  html { scroll-behavior: auto; }
+
+  /* annuler transitions/animations si présents */
+  * { transition: none !important; animation: none !important; }
+}
+
+/* ---------- Tablette: déclenchement à 772px ---------- */
+@media (min-width: 772px) {
+  /* grille : 2 colonnes */
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Forme circulaire : arrondir la figure et conserver aspect ratio pour cercle */
+  .grid figure {
+    border-radius: var(--figure-radius-tablet); /* 50% => cercle */
+    aspect-ratio: 1 / 1; /* s'assure que la figure reste carrée pour former un cercle */
+    overflow: hidden;
+  }
+
+  /* Réglez la dernière figure pour qu'elle occupe les deux colonnes (pleine largeur) */
+  .grid figure:last-child {
+    grid-column: 1 / -1; /* occupe les 2 colonnes */
+    /* on conserve la circularité si le design le demande - sinon tu peux mettre border-radius: 0; */
+    border-radius: var(--figure-radius-tablet);
+  }
+}
+
+/* ---------- Grand écran: déclenchement à 992px ---------- */
+@media (min-width: 992px) {
+  /* uniquement la propriété qui change : 3 colonnes.
+     On évite de répéter les autres règles déjà valides. */
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Chaque 3ème figure s'étend sur 2 colonnes (ex: 3, 6, 9...) */
+  .grid figure:nth-child(3n) {
+    grid-column: span 2;
+  }
+
+  /* Supprimer le rayon de bordure de toutes les figures sur grand écran */
+  .grid figure {
+    border-radius: var(--figure-radius-desktop); /* 0 */
+    overflow: visible; /* permet aux images / contenus de s'étendre si nécessaire */
+    aspect-ratio: auto; /* laisse les éléments s'adapter à la mise en page large */
+  }
+
+  /* Ajustement visuel pour image des figures qui s'étendent sur 2 colonnes */
+  .grid figure:nth-child(3n) img {
+    height: auto; /* rien de forcé — l'image s'adapte */
+    object-fit: cover;
+  }
+}
+
+/* ---------- Mode sombre (assumant palette claire par défaut) ---------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121212;
+    --paper: #1e1e1e;
+    --text: #e5e5e5;
+    --accent-border: #000000;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+  }
+
+  /* Figures plus foncées, texte plus clair (jaune pour figcaption si tu veux) */
+  .grid figure {
+    background-color: var(--paper);
+    color: #ffea00;       /* texte clair/jaune pour les éléments internes */
+    border-color: var(--accent-border); /* bordure noire */
+  }
+
+  figcaption {
+    color: #ffea00;
+  }
+}
